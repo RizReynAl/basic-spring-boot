@@ -7,5 +7,5 @@ workflows:
   maven_test:
     jobs:
       - maven/test: # checkout, build, test, and upload test results
-          app_src_directory: circleci-directory-root
-          test_results_path: circleci-directory-root/target/surefire-reports
+          app_src_directory: basic-spring-boot
+          test_results_path: basic-spring-boot/target/surefire-reports

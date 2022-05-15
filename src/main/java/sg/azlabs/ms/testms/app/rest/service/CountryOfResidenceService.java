@@ -43,7 +43,7 @@ public class CountryOfResidenceService extends BaseService{
         }
 
         CountryOfResidence cor = new CountryOfResidence();
-        cor.setCor("Indonesia");
+        cor.setCor("COLUMBIA");
         cor.setUid("1");
         cor.setLanguageCode("EN");
         cor.setPublishFlag(true);

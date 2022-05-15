@@ -32,30 +32,39 @@ jobs:
           name: Deploy Over SSH
           command: |
             ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
-            mkdir upload_before && \
+            rm -R tmp/
+            mkdir -p tmp
+            mkdir -p tmp/before_deploy && \
             kill $(ps aux | grep 'testms-0.1' | awk '{print $2}')  && \
-            nohup java -jar testms-0.1.jar > jar-log.log & exit && \
-            mkdir upload_after'
-#      - run:
-#          name: Deploy Over SSH
-#          command: |-
-#        ssh $SSH_USER@$SSH_HOST 'bash -c CURRDATE=$(date +%s);echo \$CURRDATE; cd /home/circleci && \
-#        mkdir test_create_dir'
+            nohup java -jar 0/~/project/target/testms-0.1.jar > jar-log.log & exit && \
+            mkdir -p tmp/success_deploy'
+  transfer:
+    machine:
+      enabled: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "56:de:3a:2c:69:ca:92:7c:95:55:ee:2c:bb:75:66:bf"
+      - run: # print the name of the branch we're on
+          name: "What Build Number I on?"
+          command: echo ${CIRCLE_BUILD_NUM}
+      - run:
+          name: Transfer Jar
+          command: |
+            ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
+            args='$CIRCLE_PREVIOUS_BUILD_NUM'
+            bash ./test.sh RizReynAl/basic-spring-boot "${args}" &&\
+            bash ./download.sh RizReynAl/basic-spring-boot "${args}" &&\
+            mkdir -p tmp/success_transfer'
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - deploy:
+      - transfer:
           requires:
             - build
-
-#      - run:
-#          name: Deploy Over SSH
-#        command: |
-#          ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
-#          kill $(ps aux | grep 'testms-0.1' | awk '{print $2}')  && \
-#          mkdir upload_before && \
-#          nohup java -jar testms-0.1.jar > jar-log.log & exit && \
-#          mkdir upload_after'
+      - deploy:
+          requires:
+            - transfer

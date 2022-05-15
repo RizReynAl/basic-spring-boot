@@ -29,11 +29,16 @@ jobs:
           fingerprints:
             - "56:de:3a:2c:69:ca:92:7c:95:55:ee:2c:bb:75:66:bf"
       - run:
+          name: Kill Existing Over SSH
+          command: |
+            ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
+            bash ./killprocess.sh'
+      - run:
           name: Deploy Over SSH
           command: |
             ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
             mkdir -p tmp/before_deploy && \
-            nohup java -jar 0/~/project/target/testms-0.1.jar > jar-log.log & exit && \
+            bash ./runningprocess.sh && \
             mkdir -p tmp/success_deploy'
   transfer:
     machine:
@@ -44,7 +49,7 @@ jobs:
             - "56:de:3a:2c:69:ca:92:7c:95:55:ee:2c:bb:75:66:bf"
       - run: # print the name of the branch we're on
           name: "What Build Number I on?"
-          command: echo ${CIRCLE_BUILD_NUM}
+          command: echo ${CIRCLE_PREVIOUS_BUILD_NUM}
       - run:
           name: Transfer Jar
           command: |

@@ -37,6 +37,8 @@ jobs:
           name: Deploy Over SSH
           command: |
             ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
+            rm -R 0/ && \
+            rm steps-running-manual-if-failed.txt && \
             mkdir -p tmp/before_deploy && \
             bash ./runningprocess.sh && \
             mkdir -p tmp/success_deploy'
@@ -54,7 +56,6 @@ jobs:
           name: Transfer Jar
           command: |
             ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
-            rm -R 0/
             rm -R logs/
             rm jar-log.log
             args='$CIRCLE_PREVIOUS_BUILD_NUM'

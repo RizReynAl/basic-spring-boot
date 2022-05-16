@@ -32,8 +32,6 @@ jobs:
           name: Kill Existing Over SSH
           command: |
             ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
-            rm -R 0/ && \
-            rm steps-running-manual-if-failed.txt && \
             bash ./killprocess.sh'
       - run:
           name: Deploy Over SSH
@@ -52,6 +50,12 @@ jobs:
       - run: # print the name of the branch we're on
           name: "What Build Number I on?"
           command: echo ${CIRCLE_PREVIOUS_BUILD_NUM}
+      - run:
+          name: Delete Cache
+          command: |
+            ssh circleci@31.187.75.85 'bash -c cd /home/circleci && \
+            rm -R 0/ && \
+            rm steps-running-manual-if-failed.txt'
       - run:
           name: Transfer Jar
           command: |
